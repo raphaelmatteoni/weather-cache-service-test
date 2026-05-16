@@ -54,8 +54,8 @@ ForecastsController#index
 ### Option A — Docker (recommended, zero setup)
 
 ```bash
-git clone <repo-url>
-cd weather-cache-service
+git clone https://github.com/raphaelmatteoni/weather-cache-service-test.git
+cd weather-cache-service-test
 
 docker compose up
 ```
@@ -69,8 +69,8 @@ Open [http://localhost:3000](http://localhost:3000) and type any address or post
 **Prerequisites:** Ruby 3.3.5 (see `.ruby-version`) + Bundler
 
 ```bash
-git clone <repo-url>
-cd weather-cache-service
+git clone https://github.com/raphaelmatteoni/weather-cache-service-test.git
+cd weather-cache-service-test
 
 bundle install
 bin/rails db:prepare
