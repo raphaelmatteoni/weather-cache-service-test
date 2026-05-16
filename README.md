@@ -23,6 +23,7 @@ A Ruby on Rails application that accepts any address or postal code, retrieves a
 | Weather data | [Open-Meteo](https://open-meteo.com/) | Free, no API key, returns current + 7-day forecast |
 | HTTP client | `Net::HTTP` (stdlib) | No extra dependency for a thin wrapper |
 | Cache store | `Rails.cache` (`:memory_store` in dev) | Fits the 30-min TTL requirement with zero config; Solid Cache takes over in production |
+| Test framework | `rspec-rails` | Expressive `describe/context/it` structure; preferred for senior-level readability |
 | Test HTTP stubbing | `webmock` | Industry standard; prevents any real network calls during tests |
 | Database | SQLite | Minimal setup for local running |
 
@@ -73,10 +74,10 @@ Open [http://localhost:3000](http://localhost:3000) and type any address or post
 ### Running tests
 
 ```bash
-bundle exec rails test
+bundle exec rspec
 ```
 
-All 17 tests pass. No network requests are made during the test suite — WebMock intercepts all HTTP calls and Geocoder is configured to use its built-in test lookup.
+24 examples, 0 failures. No network requests are made during the test suite — WebMock intercepts all HTTP calls and Geocoder is configured to use its built-in test lookup.
 
 ---
 

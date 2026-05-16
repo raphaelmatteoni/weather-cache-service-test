@@ -45,7 +45,9 @@ group :development, :test do
 end
 
 group :test do
-  # Stub HTTP requests so unit tests never hit real external APIs
+  # RSpec test framework for Rails
+  gem "rspec-rails"
+  # Stub HTTP requests so specs never hit real external APIs
   gem "webmock"
 end
 
