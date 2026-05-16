@@ -1,24 +1,113 @@
-# README
+# Weather Cache Service
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A Ruby on Rails application that accepts any address or postal code, retrieves a 7-day weather forecast, and caches the result for 30 minutes per postal code. A visible badge tells the user whether the data came from the cache or a live API call.
 
-Things you may want to cover:
+---
 
-* Ruby version
+## Features
 
-* System dependencies
+- Search by any address or postal code (international support)
+- Current temperature, feels-like, humidity, and wind speed
+- 7-day extended forecast with daily high/low temperatures and precipitation (bonus)
+- Results cached for **30 minutes** keyed by postal code
+- Clear **"Live" / "Cached"** indicator on every result
 
-* Configuration
+---
 
-* Database creation
+## Tech Stack
 
-* Database initialization
+| Concern | Choice | Rationale |
+|---|---|---|
+| Framework | Rails 8 | Required by the brief |
+| Geocoding | `geocoder` gem (Nominatim) | Free, no API key, works globally |
+| Weather data | [Open-Meteo](https://open-meteo.com/) | Free, no API key, returns current + 7-day forecast |
+| HTTP client | `Net::HTTP` (stdlib) | No extra dependency for a thin wrapper |
+| Cache store | `Rails.cache` (`:memory_store` in dev) | Fits the 30-min TTL requirement with zero config; Solid Cache takes over in production |
+| Test HTTP stubbing | `webmock` | Industry standard; prevents any real network calls during tests |
+| Database | SQLite | Minimal setup for local running |
 
-* How to run the test suite
+---
 
-* Services (job queues, cache servers, search engines, etc.)
+## Architecture
 
-* Deployment instructions
+```
+ForecastsController#index
+  └── WeatherService.call(address)
+        ├── GeocodingService.locate(address)     # address → lat/lon + postal_code
+        │     └── Geocoder (Nominatim)
+        ├── Rails.cache.exist?(cache_key)        # snapshot before fetch
+        └── Rails.cache.fetch(cache_key, 30.min)
+              └── (on miss) Open-Meteo API       # Net::HTTP GET
+```
 
-* ...
+**Cache-aside pattern:** `Rails.cache.exist?` is called *before* `fetch` to record whether the result was already in cache. This is important because `fetch` populates the cache on a miss — checking existence after would always return `true`.
+
+**Cache key:** `"forecast/#{postal_code}"` — the postal code is normalised from the geocoder result. For locations without a known postal code (some rural areas), a rounded lat/lon string is used as fallback.
+
+**Service objects** (`app/services/`) keep all business logic out of the controller. Each service has a single responsibility, making them independently testable.
+
+---
+
+## Running Locally
+
+### Prerequisites
+
+- Ruby 3.3.5 (see `.ruby-version`)
+- Bundler
+
+### Setup
+
+```bash
+git clone <repo-url>
+cd weather-cache-service
+
+bundle install
+bin/rails db:create
+bin/rails server
+```
+
+Open [http://localhost:3000](http://localhost:3000) and type any address or postal code.
+
+> **No API keys needed.** Both the geocoding provider (Nominatim/OpenStreetMap) and the weather API (Open-Meteo) are free and require no registration.
+
+### Running tests
+
+```bash
+bundle exec rails test
+```
+
+All 17 tests pass. No network requests are made during the test suite — WebMock intercepts all HTTP calls and Geocoder is configured to use its built-in test lookup.
+
+---
+
+## Design Decisions & Trade-offs
+
+### Why Open-Meteo instead of OpenWeatherMap?
+
+Open-Meteo requires no API key. This means any reviewer can clone and run the project immediately without signing up for an account. It also provides all required data: current temperature, feels-like, humidity, wind, and a 7-day daily forecast with high/low and precipitation.
+
+### Why `Net::HTTP` instead of Faraday?
+
+The Open-Meteo call is a single, simple GET request. Adding Faraday would introduce a dependency for no practical benefit at this scale. `Net::HTTP` is part of Ruby's stdlib and is sufficient when wrapped properly with timeout configuration.
+
+### Why `geocoder` + Nominatim?
+
+Same zero-config reasoning as above. Nominatim covers addresses worldwide. The `geocoder` gem ships a test lookup (`Geocoder::Lookup::Test`) that lets tests control geocoding results without network calls.
+
+### Why `Rails.cache.exist?` before `fetch`?
+
+`Rails.cache.fetch` populates the cache on a miss and returns the block's result. Checking existence *after* the fetch would always report a hit. Snapshotting the state *before* the fetch gives an accurate `cached:` flag.
+
+### Caching in development
+
+Rails sets `config.cache_store = :memory_store` in development. `Rails.cache.fetch` and `Rails.cache.exist?` work with this store without any extra setup — no need to run `rails dev:cache`. In production, the app is pre-configured to use Solid Cache (database-backed, already in the Gemfile).
+
+---
+
+## What I Would Do With More Time
+
+1. **Rate limiting / Nominatim ToS compliance** — Nominatim requires a `User-Agent` header and discourages heavy use. In production I would switch Geocoder to a paid provider (e.g., Google Maps, Mapbox) or self-host a geocoder.
+2. **Background cache warm-up** — Pre-fetch and refresh cached forecasts before expiry using Solid Queue (already in the Gemfile), so users always see a fast response.
+3. **Error monitoring** — Add Sentry or similar to capture `GeocodingService::NotFoundError` and `WeatherService::FetchError` in production.
+4. **Internationalisation** — Temperature units could be toggled (°C / °F) based on the user's locale.
+5. **More test coverage** — Integration tests with VCR cassettes would lock in the exact API response shape, guarding against upstream changes.
