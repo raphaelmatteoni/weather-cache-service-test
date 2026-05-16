@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    environment:
+      RAILS_ENV: development
     ports:
       - "3000:3000"
     # Persist the SQLite database between container restarts

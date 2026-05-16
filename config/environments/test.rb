@@ -24,6 +24,10 @@ Rails.application.configure do
   # The cache is cleared in each test's teardown to prevent leakage.
   config.cache_store = :memory_store
 
+  # Remove HostAuthorization middleware in tests — Rails request specs use
+  # www.example.com as the default host which would otherwise be blocked.
+  config.middleware.delete ActionDispatch::HostAuthorization
+
   # Render exception templates for rescuable exceptions and raise for other exceptions.
   config.action_dispatch.show_exceptions = :rescuable
 

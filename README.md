@@ -83,6 +83,12 @@ Open [http://localhost:3000](http://localhost:3000) and type any address or post
 
 ### Running tests
 
+**With Docker:**
+```bash
+docker compose run --rm web bundle exec rspec
+```
+
+**Local Ruby:**
 ```bash
 bundle exec rspec
 ```
