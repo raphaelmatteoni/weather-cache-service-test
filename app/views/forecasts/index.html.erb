@@ -8,7 +8,7 @@
       value:       params[:address],
       placeholder: "e.g. New York, NY  or  SW1A 1AA  or  10115 Berlin",
       autofocus:   true %>
-  <%= f.submit "Search" %>
+  <button type="submit" class="search-btn" aria-label="Search">&#x1F50D;</button>
 <% end %>
 
 <% if flash[:alert].present? || flash.now[:alert].present? %>

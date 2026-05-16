@@ -61,18 +61,21 @@ body {
   border-color: #4299e1;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
 }
-.search-form button {
-  padding: 0.65rem 1.4rem;
+.search-btn {
+  padding: 0.65rem 1rem;
   background: #3182ce;
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 1;
   cursor: pointer;
   transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.search-form button:hover { background: #2b6cb0; }
+.search-btn:hover { background: #2b6cb0; }
 
 /* ── Alerts ── */
 .alert {
