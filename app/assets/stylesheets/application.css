@@ -183,6 +183,7 @@ body {
 .daily-forecast__cond { flex: 2; color: #718096; text-align: center; }
 .daily-forecast__temps { flex: 1; text-align: right; color: #2d3748; font-weight: 600; }
 .daily-forecast__temps span { color: #a0aec0; font-weight: 400; }
+.precip { font-size: 0.75rem; color: #4299e1; margin-left: 0.3rem; }
 
 .forecast-card__footer {
   padding: 0.6rem 1.75rem;

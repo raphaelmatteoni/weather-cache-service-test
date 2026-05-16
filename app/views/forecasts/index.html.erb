@@ -54,7 +54,12 @@
           <div class="daily-forecast__day">
             <%= day[:date] == Date.today ? "Today" : day[:date].strftime("%a %d") %>
           </div>
-          <div class="daily-forecast__cond"><%= day[:condition] %></div>
+          <div class="daily-forecast__cond">
+            <%= day[:condition] %>
+            <% if day[:precipitation].to_f > 0 %>
+              <span class="precip">&#x1F4A7; <%= day[:precipitation] %> mm</span>
+            <% end %>
+          </div>
           <div class="daily-forecast__temps">
             <%= day[:temp_max].round %>&deg;
             <span>/ <%= day[:temp_min].round %>&deg;</span>
