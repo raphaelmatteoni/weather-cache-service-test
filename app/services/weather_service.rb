@@ -2,11 +2,12 @@ require "net/http"
 require "json"
 
 # Orchestrates geocoding, caching, and weather fetching.
-# Entry point: WeatherService.call(address) → { data:, cached:, location: }
+# Entry point: WeatherService.call(address, unit: :celsius) → { data:, cached:, location:, unit: }
 class WeatherService
   class FetchError < StandardError; end
 
-  CACHE_TTL = 30.minutes
+  CACHE_TTL  = 30.minutes
+  VALID_UNITS = %w[celsius fahrenheit].freeze
 
   # WMO Weather Interpretation Codes → human-readable description
   # https://open-meteo.com/en/docs#weathervariables
@@ -23,17 +24,18 @@ class WeatherService
     95 => "Thunderstorm", 96 => "Thunderstorm with hail", 99 => "Thunderstorm with heavy hail"
   }.freeze
 
-  def self.call(address)
-    new(address).call
+  def self.call(address, unit: "celsius")
+    new(address, unit: unit).call
   end
 
-  def initialize(address)
+  def initialize(address, unit: "celsius")
     @address = address
+    @unit    = VALID_UNITS.include?(unit.to_s) ? unit.to_s : "celsius"
   end
 
   def call
-    location = GeocodingService.locate(@address)
-    cache_key = "forecast/#{location.postal_code}"
+    location  = GeocodingService.locate(@address)
+    cache_key = "forecast/#{location.postal_code}/#{@unit}"
 
     # Check existence before fetch so we can report the cache hit accurately.
     # Rails.cache.fetch would populate the cache on a miss, so we snapshot
@@ -44,7 +46,7 @@ class WeatherService
       fetch_forecast(location)
     end
 
-    { data: data, cached: from_cache, location: location }
+    { data: data, cached: from_cache, location: location, unit: @unit }
   end
 
   private
@@ -62,7 +64,7 @@ class WeatherService
         longitude:      location.lon,
         current:        "temperature_2m,apparent_temperature,weathercode,windspeed_10m,relativehumidity_2m",
         daily:          "temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum",
-        temperature_unit: "celsius",
+        temperature_unit: @unit,
         wind_speed_unit:  "kmh",
         timezone:       "auto",
         forecast_days:  7

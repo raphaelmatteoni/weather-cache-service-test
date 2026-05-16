@@ -1,15 +1,29 @@
+<% unit_symbol = @unit == "fahrenheit" ? "&deg;F" : "&deg;C" %>
+<% other_unit  = @unit == "fahrenheit" ? "celsius" : "fahrenheit" %>
+<% other_label = @unit == "fahrenheit" ? "&deg;C" : "&deg;F" %>
+
 <header class="app-header">
   <h1>&#x1F324; Weather Cache Service</h1>
   <p>Enter any address or postal code to get the current forecast</p>
 </header>
 
-<%= form_with url: root_path, method: :get, local: true, class: "search-form" do |f| %>
-  <%= f.text_field :address,
-      value:       params[:address],
-      placeholder: "e.g. New York, NY  or  SW1A 1AA  or  10115 Berlin",
-      autofocus:   true %>
-  <button type="submit" class="search-btn" aria-label="Search">&#x1F50D;</button>
-<% end %>
+<div class="search-row">
+  <%= form_with url: root_path, method: :get, local: true, class: "search-form" do |f| %>
+    <%= f.hidden_field :unit, value: @unit || "celsius" %>
+    <%= f.text_field :address,
+        value:       params[:address],
+        placeholder: "e.g. New York, NY  or  SW1A 1AA  or  10115 Berlin",
+        autofocus:   true %>
+    <button type="submit" class="search-btn" aria-label="Search">&#x1F50D;</button>
+  <% end %>
+
+  <% if params[:address].present? %>
+    <%= link_to root_path(address: params[:address], unit: other_unit),
+        class: "unit-toggle", aria: { label: "Switch to #{other_unit}" } do %>
+      <%= other_label.html_safe %>
+    <% end %>
+  <% end %>
+</div>
 
 <% if flash[:alert].present? || flash.now[:alert].present? %>
   <div class="alert alert-danger">
@@ -28,14 +42,14 @@
           <span class="cache-badge miss">&#x1F504; Live</span>
         <% end %>
       </div>
-      <div class="forecast-card__temp"><%= @forecast[:current_temp].round(1) %>&deg;C</div>
+      <div class="forecast-card__temp"><%= @forecast[:current_temp].round(1) %><%= unit_symbol.html_safe %></div>
       <div class="forecast-card__condition"><%= @forecast[:condition] %></div>
     </div>
 
     <div class="forecast-card__details">
       <div class="forecast-card__detail">
         <div class="forecast-card__detail-label">Feels like</div>
-        <div class="forecast-card__detail-value"><%= @forecast[:feels_like].round(1) %>&deg;C</div>
+        <div class="forecast-card__detail-value"><%= @forecast[:feels_like].round(1) %><%= unit_symbol.html_safe %></div>
       </div>
       <div class="forecast-card__detail">
         <div class="forecast-card__detail-label">Humidity</div>
@@ -61,8 +75,8 @@
             <% end %>
           </div>
           <div class="daily-forecast__temps">
-            <%= day[:temp_max].round %>&deg;
-            <span>/ <%= day[:temp_min].round %>&deg;</span>
+            <%= day[:temp_max].round %><%= unit_symbol.html_safe %>
+            <span>/ <%= day[:temp_min].round %><%= unit_symbol.html_safe %></span>
           </div>
         </div>
       <% end %>

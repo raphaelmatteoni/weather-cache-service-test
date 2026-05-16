@@ -2,10 +2,11 @@ class ForecastsController < ApplicationController
   def index
     return unless params[:address].present?
 
-    result = WeatherService.call(params[:address])
+    result    = WeatherService.call(params[:address], unit: params[:unit])
     @forecast = result[:data]
     @cached   = result[:cached]
     @location = result[:location]
+    @unit     = result[:unit]
   rescue GeocodingService::NotFoundError => e
     flash.now[:alert] = e.message
   rescue WeatherService::FetchError => e
