@@ -8,3 +8,194 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f0f4f8;
+  color: #1a202c;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+/* ── Header ── */
+.app-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.app-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #2d3748;
+}
+.app-header p {
+  color: #718096;
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+}
+
+/* ── Search form ── */
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 540px;
+  margin-bottom: 2rem;
+}
+.search-form input[type="text"] {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search-form input[type="text"]:focus {
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+.search-form button {
+  padding: 0.65rem 1.4rem;
+  background: #3182ce;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.search-form button:hover { background: #2b6cb0; }
+
+/* ── Alerts ── */
+.alert {
+  width: 100%;
+  max-width: 540px;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+.alert-danger { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
+
+/* ── Cache badge ── */
+.cache-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.cache-badge.hit  { background: #c6f6d5; color: #276749; }
+.cache-badge.miss { background: #bee3f8; color: #2a69ac; }
+
+/* ── Forecast card ── */
+.forecast-card {
+  width: 100%;
+  max-width: 540px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.forecast-card__header {
+  background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+  color: #fff;
+  padding: 1.5rem 1.75rem 1.25rem;
+}
+.forecast-card__location {
+  font-size: 1.1rem;
+  font-weight: 600;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.forecast-card__temp {
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0.5rem 0 0.25rem;
+}
+.forecast-card__condition {
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+.forecast-card__details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-bottom: 1px solid #edf2f7;
+}
+.forecast-card__detail {
+  padding: 0.9rem 1rem;
+  text-align: center;
+  border-right: 1px solid #edf2f7;
+}
+.forecast-card__detail:last-child { border-right: none; }
+.forecast-card__detail-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a0aec0;
+  font-weight: 600;
+}
+.forecast-card__detail-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-top: 0.2rem;
+}
+
+/* ── 7-day forecast ── */
+.daily-forecast { padding: 0.75rem 1.75rem 1.25rem; }
+.daily-forecast__title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a0aec0;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.daily-forecast__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid #f7fafc;
+  font-size: 0.9rem;
+}
+.daily-forecast__row:last-child { border-bottom: none; }
+.daily-forecast__day { flex: 1; color: #4a5568; font-weight: 500; }
+.daily-forecast__cond { flex: 2; color: #718096; text-align: center; }
+.daily-forecast__temps { flex: 1; text-align: right; color: #2d3748; font-weight: 600; }
+.daily-forecast__temps span { color: #a0aec0; font-weight: 400; }
+
+.forecast-card__footer {
+  padding: 0.6rem 1.75rem;
+  background: #f7fafc;
+  font-size: 0.75rem;
+  color: #a0aec0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 480px) {
+  .app-header h1 { font-size: 1.5rem; }
+  .forecast-card__temp { font-size: 3rem; }
+  .forecast-card__details { grid-template-columns: repeat(3, 1fr); }
+}

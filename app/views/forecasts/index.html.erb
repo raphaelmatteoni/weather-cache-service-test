@@ -1,0 +1,74 @@
+<header class="app-header">
+  <h1>&#x1F324; Weather Cache Service</h1>
+  <p>Enter any address or postal code to get the current forecast</p>
+</header>
+
+<%= form_with url: root_path, method: :get, local: true, class: "search-form" do |f| %>
+  <%= f.text_field :address,
+      value:       params[:address],
+      placeholder: "e.g. New York, NY  or  SW1A 1AA  or  10115 Berlin",
+      autofocus:   true %>
+  <%= f.submit "Search" %>
+<% end %>
+
+<% if flash[:alert].present? || flash.now[:alert].present? %>
+  <div class="alert alert-danger">
+    <%= flash[:alert] || flash.now[:alert] %>
+  </div>
+<% end %>
+
+<% if @forecast %>
+  <div class="forecast-card">
+    <div class="forecast-card__header">
+      <div class="forecast-card__location">
+        <span><%= @location.city %>, <%= @location.country %></span>
+        <% if @cached %>
+          <span class="cache-badge hit">&#x26A1; Cached</span>
+        <% else %>
+          <span class="cache-badge miss">&#x1F504; Live</span>
+        <% end %>
+      </div>
+      <div class="forecast-card__temp"><%= @forecast[:current_temp].round(1) %>&deg;C</div>
+      <div class="forecast-card__condition"><%= @forecast[:condition] %></div>
+    </div>
+
+    <div class="forecast-card__details">
+      <div class="forecast-card__detail">
+        <div class="forecast-card__detail-label">Feels like</div>
+        <div class="forecast-card__detail-value"><%= @forecast[:feels_like].round(1) %>&deg;C</div>
+      </div>
+      <div class="forecast-card__detail">
+        <div class="forecast-card__detail-label">Humidity</div>
+        <div class="forecast-card__detail-value"><%= @forecast[:humidity] %>%</div>
+      </div>
+      <div class="forecast-card__detail">
+        <div class="forecast-card__detail-label">Wind</div>
+        <div class="forecast-card__detail-value"><%= @forecast[:wind_speed] %> km/h</div>
+      </div>
+    </div>
+
+    <div class="daily-forecast">
+      <div class="daily-forecast__title">7-Day Forecast</div>
+      <% @forecast[:daily_forecast].each do |day| %>
+        <div class="daily-forecast__row">
+          <div class="daily-forecast__day">
+            <%= day[:date] == Date.today ? "Today" : day[:date].strftime("%a %d") %>
+          </div>
+          <div class="daily-forecast__cond"><%= day[:condition] %></div>
+          <div class="daily-forecast__temps">
+            <%= day[:temp_max].round %>&deg;
+            <span>/ <%= day[:temp_min].round %>&deg;</span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="forecast-card__footer">
+      <span>
+        Postal code: <strong><%= @location.postal_code %></strong>
+        &middot; cached for 30 min
+      </span>
+      <span>Updated: <%= @forecast[:fetched_at].strftime("%H:%M") %></span>
+    </div>
+  </div>
+<% end %>
