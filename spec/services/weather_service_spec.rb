@@ -12,10 +12,10 @@ RSpec.describe WeatherService do
       },
       'daily' => {
         'time'               => %w[2026-05-16 2026-05-17 2026-05-18 2026-05-19 2026-05-20 2026-05-21 2026-05-22],
-        'temperature_2m_max' => [24.0, 25.5, 23.0, 20.0, 19.5, 22.0, 26.0],
-        'temperature_2m_min' => [15.0, 16.5, 14.0, 12.0, 11.5, 13.0, 17.0],
-        'weathercode'        => [1, 3, 61, 80, 0, 1, 2],
-        'precipitation_sum'  => [0.0, 0.0, 3.5, 8.2, 0.0, 0.0, 0.0]
+        'temperature_2m_max' => [ 24.0, 25.5, 23.0, 20.0, 19.5, 22.0, 26.0 ],
+        'temperature_2m_min' => [ 15.0, 16.5, 14.0, 12.0, 11.5, 13.0, 17.0 ],
+        'weathercode'        => [ 1, 3, 61, 80, 0, 1, 2 ],
+        'precipitation_sum'  => [ 0.0, 0.0, 3.5, 8.2, 0.0, 0.0, 0.0 ]
       }
     }.to_json
   end
@@ -23,7 +23,7 @@ RSpec.describe WeatherService do
   before do
     Geocoder::Lookup::Test.add_stub('New York, NY', [
       {
-        coordinates: [40.7128, -74.0060],
+        coordinates: [ 40.7128, -74.0060 ],
         city: 'New York', state: 'New York',
         country: 'United States', postal_code: '10007'
       }

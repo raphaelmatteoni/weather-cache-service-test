@@ -11,11 +11,11 @@ RSpec.describe 'Forecasts', type: :request do
         'relativehumidity_2m'  => 65
       },
       'daily' => {
-        'time'               => ['2026-05-16'],
-        'temperature_2m_max' => [20.0],
-        'temperature_2m_min' => [14.0],
-        'weathercode'        => [2],
-        'precipitation_sum'  => [0.0]
+        'time'               => [ '2026-05-16' ],
+        'temperature_2m_max' => [ 20.0 ],
+        'temperature_2m_min' => [ 14.0 ],
+        'weathercode'        => [ 2 ],
+        'precipitation_sum'  => [ 0.0 ]
       }
     }.to_json
   end
@@ -23,7 +23,7 @@ RSpec.describe 'Forecasts', type: :request do
   before do
     Geocoder::Lookup::Test.add_stub('London', [
       {
-        coordinates: [51.5074, -0.1278],
+        coordinates: [ 51.5074, -0.1278 ],
         city: 'London', state: 'England',
         country: 'United Kingdom', postal_code: 'EC1A1BB'
       }

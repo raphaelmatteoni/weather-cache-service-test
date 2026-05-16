@@ -6,7 +6,7 @@ RSpec.describe GeocodingService do
       before do
         Geocoder::Lookup::Test.add_stub('New York, NY', [
           {
-            coordinates:  [40.7128, -74.0060],
+            coordinates:  [ 40.7128, -74.0060 ],
             address:      'New York, NY, USA',
             city:         'New York',
             state:        'New York',
@@ -49,7 +49,7 @@ RSpec.describe GeocodingService do
       before do
         Geocoder::Lookup::Test.add_stub('rural area', [
           {
-            coordinates:  [51.5074, -0.1278],
+            coordinates:  [ 51.5074, -0.1278 ],
             address:      'Some Rural Area',
             city:         'London',
             state:        'England',
@@ -69,7 +69,7 @@ RSpec.describe GeocodingService do
       before do
         Geocoder::Lookup::Test.add_stub('california', [
           {
-            coordinates:  [36.7783, -119.4179],
+            coordinates:  [ 36.7783, -119.4179 ],
             address:      'California, USA',
             city:         '',
             state:        'California',
