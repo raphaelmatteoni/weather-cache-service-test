@@ -51,19 +51,29 @@ ForecastsController#index
 
 ## Running Locally
 
-### Prerequisites
+### Option A — Docker (recommended, zero setup)
 
-- Ruby 3.3.5 (see `.ruby-version`)
-- Bundler
+```bash
+git clone <repo-url>
+cd weather-cache-service
 
-### Setup
+docker compose up
+```
+
+Open [http://localhost:3000](http://localhost:3000) and type any address or postal code.
+
+> The first build takes ~2 minutes while Docker downloads the Ruby image and installs gems. Subsequent starts are instant.
+
+### Option B — Local Ruby
+
+**Prerequisites:** Ruby 3.3.5 (see `.ruby-version`) + Bundler
 
 ```bash
 git clone <repo-url>
 cd weather-cache-service
 
 bundle install
-bin/rails db:create
+bin/rails db:prepare
 bin/rails server
 ```
 
@@ -105,7 +115,7 @@ Rails sets `config.cache_store = :memory_store` in development. `Rails.cache.fet
 
 ---
 
-## What I Would Do With More Time
+## If This Were Production
 
 1. **Rate limiting / Nominatim ToS compliance** — Nominatim requires a `User-Agent` header and discourages heavy use. In production I would switch Geocoder to a paid provider (e.g., Google Maps, Mapbox) or self-host a geocoder.
 2. **Background cache warm-up** — Pre-fetch and refresh cached forecasts before expiry using Solid Queue (already in the Gemfile), so users always see a fast response.

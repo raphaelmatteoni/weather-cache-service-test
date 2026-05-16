@@ -1,0 +1,29 @@
+FROM docker.io/library/ruby:3.3.5-slim
+
+WORKDIR /rails
+
+# Runtime + build dependencies in a single layer
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+      build-essential \
+      curl \
+      git \
+      libjemalloc2 \
+      libyaml-dev \
+      pkg-config \
+      sqlite3 && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+ENV RAILS_ENV=development \
+    BUNDLE_PATH=/usr/local/bundle
+
+# Install gems before copying app code so this layer is cached between code changes
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+COPY . .
+
+EXPOSE 3000
+
+# Prepare the database and start the server bound to all interfaces
+CMD ["bash", "-c", "bin/rails db:prepare && bin/rails server -b 0.0.0.0"]
